@@ -1,0 +1,17 @@
+{
+    "development": {
+        "config_id": "development",
+        "app_name": "xanadu-server",
+        "app_desc": "Servidor de datos del app Xanadu",
+        "node_port": 3000,
+        "json_indentation": 4,
+        "database": "mongodb://localhost/interficiesDB",
+        "dbTimeout": 30000,
+        "dbPoolSize": 25
+    },
+    "production": {
+        "config_id": "production",
+        "node_port": 3000,
+        "database": "mongodb://localhost/interficiesDB"
+    }
+}

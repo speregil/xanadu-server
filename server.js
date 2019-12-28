@@ -57,6 +57,7 @@ app.use('/notifications', notification);
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
+    gLog.error("El elemento no se encontró: " + req.body);
     next(err);
 });
 

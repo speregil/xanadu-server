@@ -39,9 +39,7 @@ service.createProgressProfile = function(userID, callback) {
     prof.ensayoAsig = false;
     prof.ensayo = false;
 
-    var db = connection.connect();
     prof.save(function(err, prof, ver){
-        connection.disconnect(db);
         if(err){
             callback(1, err['errmsg'], prof);
         }

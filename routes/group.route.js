@@ -40,7 +40,7 @@
   * params: nombre del grupo, nombre de usuario. Encriptados en el cuerpo
   */
  router.post('/asign', function(req, res, next) {
-    controller.asign(req.body.groupName, req.body.userName, function(err){
+    controller.asign(req.body.groupName, req.body.master, req.body.userName, function(err){
        res.json({mensaje : err});
     });
 });
@@ -50,7 +50,7 @@
  * params: nombre del grupo, nombre de usuario. Encriptados en el cuerpo
  */
 router.post('/unasign', function(req, res, next) {
-   controller.unasign(req.body.groupName, req.body.userName, function(err){
+   controller.unasign(req.body.groupName, req.body.master, req.body.userName, function(err){
       res.json({mensaje : err});
    });
 });
@@ -67,8 +67,8 @@ router.get('/list/:mastername', function(req, res, next) {
 /**
  * Retorna la lista de participantes del grupo que entra por parametro
  */
-router.get('/participants/:groupname', function(req, res, next) {
-   controller.getParticipants(req.params.groupname, function(err, participants){
+router.post('/participants', function(req, res, next) {
+   controller.getParticipants(req.body.groupname, req.body.master, function(err, participants){
       res.json({mensaje : err, list: participants});
    });
 });

@@ -36,20 +36,20 @@ controller.getGroups = function(masterName, callback) {
     });
 }
 
-controller.getParticipants = function(groupName, callback) {
-    service.getParticipants(groupName, function(err, participants){
+controller.getParticipants = function(groupName, masterName, callback) {
+    service.getParticipants(groupName, masterName, function(err, participants){
         callback(err, participants);
     });
 }
 
-controller.asign = function(groupName, masterName, callback) {
-    service.asign(groupName, masterName, function(err){
+controller.asign = function(groupName, masterName, userName, callback) {
+    service.asign(groupName, masterName, userName, function(err){
         callback(err);
     });
 }
 
-controller.unasign = function(groupName, userName, callback) {
-    service.unasign(groupName, userName, function(err){
+controller.unasign = function(groupName, masterName, userName, callback) {
+    service.unasign(groupName, masterName, userName, function(err){
         callback(err);
     });
 }

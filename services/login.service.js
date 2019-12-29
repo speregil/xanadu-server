@@ -6,7 +6,6 @@
  // Requerimientos
  //---------------------------------------------------------------------------------------------------
 
-var connection = require('./connection.service');       // Servicio de conexión con Mongo
 var bcrypt = require('bcrypt');                         // Libreria de encriptamiento
 var User = require('./models/user.model');              // Modelo del usuario
 var Progress = require('./models/progress.model');      // Modelo del usuario
@@ -63,7 +62,10 @@ service.register = function(username, password, shownName, admin, callback){
  */
 service.login = function(user, password, admin, callback){
     User.find({username: user}, function(err, search){
-        if(search[0]){
+        if(err){
+            callback(err['errmsg'], false, null);
+        }
+        else if(search[0]){
             bcrypt.compare(password, search[0].password, function(err, res) {
                 if(res) {
                     var user = search[0];
@@ -142,14 +144,14 @@ service.unregister = function(user, callback) {
 service.changePassword = function(user, password, callback){
     User.find({username: user}, function(err, search){
         if(err)
-            callback("Error en la base de datos");
+            callback("Error en la base de datos: " + err['errmsg']);
         else {
             if(search[0]){
                 bcrypt.hash(password, 10, function(err, hash) {
                     search[0].password = hash;
-                    search[0].save(function(err, user, ver){
-                        if(err)
-                            callback("No fue posible actualizar la contraseña");
+                    search[0].save(function(error, user, ver){
+                        if(error)
+                            callback("No fue posible actualizar la contraseña: " + error['errmsg']);
                         else
                             callback(null);
                     });
@@ -167,7 +169,9 @@ service.changePassword = function(user, password, callback){
  */
 function isDeleteable(id, callback) {
     Progress.find({userID: id}, function(err, progress){
-        if(progress[0])
+        if(err)
+            callback(false);
+        else if(progress[0])
             callback(progress[0].currentRol == 'Ninguno'); 
         else
             callback(false);

@@ -6,9 +6,8 @@
  // Requerimientos
  //---------------------------------------------------------------------------------------------------
 
- var connection = require('./connection.service');       // Servicio de conexión con Mongo
- var User = require('./models/user.model');              // Modelo del usuario
- var Notification = require('./models/notification.model')             // Modelo de la notificación
+ var User = require('./models/user.model');                     // Modelo del usuario
+ var Notification = require('./models/notification.model')      // Modelo de la notificación
  
  //-----------------------------------------------------------------------------------------------------
  // Servicio
@@ -16,46 +15,43 @@
  
  var service = {};
 
+ /**
+  * Agrega una nueva notificación a la lista del usuario que entra por parámetro
+  * user Nombre del usuario
+  * mensaje Contenido de la notificación
+  */
  service.addNotification = function(user, mensaje, callback){
-    var db = connection.connect();
     User.find({username: user, admin: false}, function(err, user){
-        if(err){
-            connection.disconnect(db);
-            callback("Error en la base de datos");
-        }
+        if(err)
+            callback("Error en la base de datos: " + err['errmsg']);
         else if(user[0]){
             var notification = new Notification();
             notification.user = user[0]._id;
             notification.mensaje = mensaje;
-            notification.save(function(err, data, ver){
-                connection.disconnect(db);
-                if(err){
-                    callback(err['errmsg']);
-                }
-                else{
+            notification.save(function(e, data, ver){
+                if(e)
+                    callback(e['errmsg']);
+                else
                     callback(null);
-                }
             });
         }
-        else {
-            connection.disconnect(db);
+        else
             callback("No fue posible encontrar al usuario");
-        }
     });
  }
 
+ /**
+  * Retorna una lista con todas las notificaciones de usuario que entra por parámetro
+  * usuario Nombre del usuario
+  */
  service.getNotifications = function(usuario, callback){
-    var db = connection.connect();
     User.find({username: usuario, admin: false}, function(err, find){
-        if(err){
-            connection.disconnect(db);
-            callback("Error en la base de datos");
-        }
+        if(err)
+            callback("Error en la base de datos: " + err['errmsg'], []);
         else if(find[0]){
-            Notification.find({user : find[0]._id}, function(err, list){
-                connection.disconnect(db);
-                if(err)
-                    callback(err, []);
+            Notification.find({user : find[0]._id}, function(e, list){
+                if(e)
+                    callback(e['errmsg'], []);
                 else
                     callback(null, list);
             });
@@ -63,17 +59,17 @@
     });
  }
 
+ /**
+  * Elimina todas las notificaciones de la lista de usuario que entra por parámetro
+  * usuario Nombre del usuario
+  */
  service.whipeNotifications = function(usuario, callback){
-    var db = connection.connect();
     User.find({username: usuario, admin: false}, function(err, find){
-        if(err){
-            connection.disconnect(db);
-            callback("Error en la base de datos");
-        }
+        if(err)
+            callback("Error en la base de datos: " + err['errmsg']);
         else if(find[0]){
-            Notification.deleteMany({user: find[0]._id}, function(err){
-                connection.disconnect(db);
-                if(err)
+            Notification.deleteMany({user: find[0]._id}, function(e){
+                if(e)
                     callback("No fue posible eliminar las notificaciones");
                 else
                     callback(null);

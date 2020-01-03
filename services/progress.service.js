@@ -6,7 +6,6 @@
  // Requerimientos
  //------------------------------------------------------------------------------------------
 
-var connection = require('./connection.service');        // Conexión con la base de datos
 var Progress = require('./models/progress.model');       // Modelo del progreso
 var User = require('./models/user.model');               // Modelo del usuario
 var Achivement = require('./models/achivement.model');   // Modelo del logro
@@ -53,48 +52,42 @@ service.createProgressProfile = function(userID, callback) {
  * user Nombre de usuario cuyo perfil de progreso se desea recuperar
  */
 service.getProfile = function(user, callback) {
-    var db = connection.connect();
     User.find({username: user}, function(err, search){
-        if(err) {
-            connection.disconnect(db);
-            callback(1, "Error en la base de datos", null);
-        }
+        if(err) 
+            callback(1, "Error en la base de datos: " + err['errmsg'], null);
         else {
             if(search[0]) {
-                Progress.find({userID: search[0]._id}, function(err, profile) {
-                    connection.disconnect(db);
-                    if(err)
-                        callback(1, err['errmsg'], null);
+                Progress.find({userID: search[0]._id}, function(e, profile) {
+                    if(e)
+                        callback(1, e['errmsg'], null);
                     else {
                         if(profile[0])
                             callback(0, null, profile[0])
-                        else {
+                        else
                             callback(1, "El usuario no se ha registrado", null);
-                        }
                     }
                 });
             }
-            else {
-                connection.disconnect(db);
+            else
                 callback(1, "El usuario no existe", null);
-            }
         }
     });
 }
 
+/**
+ * Obtiene el valor particular de una bandera del usuario que entra por parámetro
+ * user Nombre del usuario
+ * flag Identificador de la bandera a consultar
+ */
 service.getFlag = function(user, flag, callback){
-    var db = connection.connect();
     User.find({username: user}, function(err, search){
-        if(err) {
-            connection.disconnect(db);
-            callback("Error en la base de datos", false);
-        }
+        if(err) 
+            callback("Error en la base de datos: " + err['errmsg'], false);
         else {
             if(search[0]) {
-                Progress.find({userID: search[0]._id}, function(err, profile) {
-                    connection.disconnect(db);
-                    if(err)
-                        callback(err['errmsg'], false);
+                Progress.find({userID: search[0]._id}, function(e, profile) {
+                    if(e)
+                        callback(e['errmsg'], false);
                     else {
                         var prof = profile[0];
                         if(prof){
@@ -109,10 +102,8 @@ service.getFlag = function(user, flag, callback){
                     }
                 });
             }
-            else {
-                connection.disconnect(db);
+            else 
                 callback("El usuario no existe", false);
-            }
         }
     });
 }
@@ -122,27 +113,20 @@ service.getFlag = function(user, flag, callback){
  * user Nombre de usuario cuyos logros se desean recuperar
  */
 service.getAchivements = function(user, callback) {
-    var db = connection.connect();
     User.find({username: user}, function(err, search){
-        if(err){
-            connection.disconnect(db);
-            callback("Error en la base de datos", []);
-        }
+        if(err)
+            callback("Error en la base de datos: " + err['errmsg'], []);
         else {
             if(search[0]) {
-                Achivement.find({userID: search[0]._id}, function(err, achivements) {
-                    connection.disconnect(db);
-                    if(err)
+                Achivement.find({userID: search[0]._id}, function(e, achivements) {
+                    if(e)
                         callback ("No fue posible recuperar todos los logros", []);
-                    else {
+                    else
                         callback(null, achivements);
-                    }
                 });
             }
-            else {
-                connection.disconnect(db);
+            else
                 callback("El usuario solicitado no exites", []);
-            }
         }
     });
 }
@@ -153,143 +137,50 @@ service.getAchivements = function(user, callback) {
  * achivementID ID de la base de datos del logro que se desea agregar
  */
 service.addAchivement = function (user, text, points, callback) {
-    var db = connection.connect();
     User.find({username: user}, function(err, search){
-        if(err){
-            connection.disconnect(db);
-            callback("Error en la base de datos: " + err);
-        }
+        if(err)
+            callback("Error en la base de datos: " + err['errmsg']);
         else {
             if(search[0]) {
                 var achivement = new Achivement();
                 achivement.userID = search[0]._id;
                 achivement.text = text;
                 achivement.points = points;
-                achivement.save(function(err, object, ver){
-                    connection.disconnect(db);
-                    if(err)
+                achivement.save(function(e, object, ver){
+                    if(e)
                         callback("No fue posible guardar el logro");
                     else   
                         callback(null);
                 });
             }
-            else {
-                connection.disconnect(db);
+            else 
                 callback("No fue posible encontrar al usuario solicitado");
-            }
         }
     });
 }
 
 /**
- * Actualiza el rol del usuario cuyo username entra por parametro con el rol peovisto
+ * Actualiza el rol del usuario cuyo username entra por parametro con el rol provisto
  * user Nombre del usuario
  * role Texto del nuevo rol
  */
 service.updateRole = function(user, role, callback){
-    var db = connection.connect();
     User.find({username: user}, function(err, search){
         if(err)
-            callback("Error en la base de datos");
+            callback("Error en la base de datos: " + err['errmsg']);
         else {
             if(search[0]) {
-                Progress.find({userID: search[0]._id}, function(err, profile) {
-                    if(err){
+                Progress.find({userID: search[0]._id}, function(e, profile) {
+                    if(e)
                         callback("No fue posible encontrar el perfil");
-                    }else{
+                    else{
                         profile[0].currentRol = role;
-                        profile[0].save(function(err, prof, ver){
-                            connection.disconnect(db);
-                            if(err){
+                        profile[0].save(function(error, prof, ver){
+                            if(error)
                                 callback("No fue posible cambiar el rol");
-                            }else{
+                            else
                                 callback(null);
-                            }
                         });
-                    }
-                });
-            }
-        }
-    });
-}
-
-service.updateAvatar = function(user, avatar, callback){
-    var db = connection.connect();
-    User.find({username: user}, function(err, search){
-        if(err){
-            connection.disconnect(db);
-            callback("Error en la base de datos");
-        }
-        else {
-            if(search[0]) {
-                Progress.find({userID: search[0]._id}, function(err, profile) {
-                    if(err){
-                        connection.disconnect(db);
-                        callback("No fue posible encontrar el perfil");
-                    }else{
-                        profile[0].avatar = avatar;
-                        profile[0].save(function(err, prof, ver){
-                            connection.disconnect(db);
-                            if(err){
-                                callback("No fue posible cambiar el avatar");
-                            }else{
-                                callback(null);
-                            }
-                        });
-                    }
-                });
-            }
-        }
-    });
-}
-
-service.updateLevel = function(user, level, callback){
-    var db = connection.connect();
-    User.find({username: user}, function(err, search){
-        if(err){
-            connection.disconnect(db);
-            callback("Error en la base de datos");
-        }
-        else {
-            if(search[0]) {
-                Progress.find({userID: search[0]._id}, function(err, profile) {
-                    if(err){
-                        connection.disconnect(db);
-                        callback("No fue posible encontrar el perfil");
-                    }else{
-                        profile[0].level = level;
-                        profile[0].save(function(err, prof, ver){
-                            connection.disconnect(db);
-                            if(err){
-                                callback("No fue posible cambiar el nivel");
-                            }else{
-                                callback(null);
-                            }
-                        });
-                    }
-                });
-            }
-            else {
-                connection.disconnect(db);
-                callback("No fue posible encontrar el usuario");
-            }
-        }
-    });
-}
-
-service.getAvatar = function(user, callback){
-    var db =  connection.connect();
-    User.find({username: user}, function(err, search){
-        if(err)
-            callback("Error en la base de datos", null);
-        else {
-            if(search[0]) {
-                Progress.find({userID: search[0]._id}, function(err, profile) {
-                    connection.disconnect(db);
-                    if(err){
-                        callback("No fue posible encontrar el perfil", null);
-                    }else{
-                        callback(null, profile[0].avatar);
                     }
                 });
             }
@@ -298,30 +189,108 @@ service.getAvatar = function(user, callback){
 }
 
 /**
- * Activa la bandera de progreso especificadel usuario que entra por parametro
+ * Actualiza el nombre del archivo del avatar del usuario que entra por parámetro
+ * user Nombre del usuario
+ * avatar Nuevo nombre del archivo del avatar
+ */
+service.updateAvatar = function(user, avatar, callback){
+    User.find({username: user}, function(err, search){
+        if(err)
+            callback("Error en la base de datos: " + err['errmsg']);
+        else {
+            if(search[0]) {
+                Progress.find({userID: search[0]._id}, function(e, profile) {
+                    if(e)
+                        callback("No fue posible encontrar el perfil");
+                    else{
+                        profile[0].avatar = avatar;
+                        profile[0].save(function(error, prof, ver){
+                            if(error)
+                                callback("No fue posible cambiar el avatar");
+                            else
+                                callback(null);
+                        });
+                    }
+                });
+            }
+        }
+    });
+}
+
+/**
+ * Actualiza el nivel del usuario que entra por parámetro
+ * user Nombre del usuario
+ * level Nuevo nivel del usuario
+ */
+service.updateLevel = function(user, level, callback){
+    User.find({username: user}, function(err, search){
+        if(err)
+            callback("Error en la base de datos: " + err['errmsg']);
+        else {
+            if(search[0]) {
+                Progress.find({userID: search[0]._id}, function(e, profile) {
+                    if(e)
+                        callback("No fue posible encontrar el perfil");
+                    else{
+                        profile[0].level = level;
+                        profile[0].save(function(error, prof, ver){
+                            if(error)
+                                callback("No fue posible cambiar el nivel");
+                            else
+                                callback(null);
+                        });
+                    }
+                });
+            }
+            else
+                callback("No fue posible encontrar el usuario");
+        }
+    });
+}
+
+/**
+ * Retorna el nombre del archivo del avatar actual del usuario que entra por parámetro
+ * user Nombre del usuario
+ */
+service.getAvatar = function(user, callback){
+    User.find({username: user}, function(err, search){
+        if(err)
+            callback("Error en la base de datos: " + err['errmsg'], null);
+        else {
+            if(search[0]) {
+                Progress.find({userID: search[0]._id}, function(e, profile) {
+                    if(e)
+                        callback("No fue posible encontrar el perfil", null);
+                    else
+                        callback(null, profile[0].avatar);
+                });
+            }
+        }
+    });
+}
+
+/**
+ * Activa la bandera de progreso especifica del usuario que entra por parametro
  * user Nombre de usuario que registra el progreso
  * flag Bandera especifica que se desea activar
  */
 service.activateFlag = function(user, flag, callback){
-    var db = connection.connect();
-        User.find({username: user}, function(err, search){
+    User.find({username: user}, function(err, search){
         if(err)
-            callback("Error en la base de datos");
+            callback("Error en la base de datos: " + err['errmsg']);
         else {
             if(search[0]) {
-                Progress.find({userID: search[0]._id}, function(err, profile) {
-                    if(err){
+                Progress.find({userID: search[0]._id}, function(e, profile) {
+                    if(e)
                         callback("No fue posible encontrar el perfil");
-                    }else{
+                    else{
                         var userProgress = profile[0];
                         userProgress[flag] = true;
-                        userProgress.save(function(err, prof, ver){
-                            connection.disconnect(db);
-                            if(err){
+                        userProgress.save(function(error, prof, ver){
+                            if(error)
                                 callback("No fue posible actualizar el progreso");
-                            }else{
+                            else
                                 callback(null);
-                            }
                         });
                     }
                 });

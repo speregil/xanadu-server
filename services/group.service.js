@@ -104,19 +104,23 @@ service.getGroups = function(masterName, callback){
                     callback(error['errmsg'], []);
                 else if(group[0]){
                     pList = group[0].participants;
-                    for ( participant of pList ) {
-                        check++;
-                        User.find({_id: participant}, function(e, user) {
-                            if(e)
-                                callback ("No fue posible recuperar a los participantes", []);
-                            else {
-                                participants.push(user[0]);
-                                check--;
-                                if(check <= 0)   
-                                    callback(null, participants);
-                            }
-                        });
+                    if(pList.length > 0){
+                        for ( participant of pList ) {
+                            check++;
+                            User.find({_id: participant}, function(e, user) {
+                                if(e)
+                                    callback ("No fue posible recuperar a los participantes", []);
+                                else {
+                                    participants.push(user[0]);
+                                    check--;
+                                    if(check <= 0)   
+                                        callback(null, participants);
+                                }
+                            });
+                        }
                     }
+                    else
+                        callback("No hay participantes en este grupo", []);
                 }
             });
         }

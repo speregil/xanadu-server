@@ -23,18 +23,22 @@
  service.createGroup = function(groupName, masterName, callback){
     var group = new Group();
     group.name = groupName;
-    User.find({username: masterName}, function(err, search){
+    User.find({username: masterName, admin: true}, function(err, search){
         if(err)
             callback("Error en la base de datos: " + err['errmsg'], null);
         else if(search[0]){
-            group.master = search[0]._id;
-            group.participants = new Array();
-            group.save(function(error, data, ver){
-                if(error){
-                    callback(error['errmsg'], null);
-                }
+            Group.find({name: groupName, master: search[0]._id}, function(error, list){
+                if(list[0])
+                    callback("Grupo duplicado para el master: " + masterName);
                 else{
-                    callback(null, data);
+                    group.master = search[0]._id;
+                    group.participants = new Array();
+                    group.save(function(error, data, ver){
+                        if(error)
+                            callback(error['errmsg'], null);
+                        else
+                            callback(null, data);
+                    });
                 }
             });
         }

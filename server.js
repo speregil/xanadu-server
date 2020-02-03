@@ -63,7 +63,7 @@ app.use(function(req, res, next) {
 
 connection.init();
  
-var server = app.listen(3100, function() {
+var server = app.listen(3131, function() {
     var host = 'localhost';
     var port = server.address().port;
     console.log('Servidor corriendo en http://%s:%s', host, port);

@@ -31,6 +31,7 @@ var ProgressSchema = new Schema({
     critico:Boolean,                                                    // SI ya se le califico el reto del critico
     periodistaAsig:Boolean,                                             // SI ya acepto el reto del periodista
     periodista:Boolean,                                                 // Si ya se le califico el reto del periodista
+    final:Boolean                                                       // Si ya tiene el nivel de magis
 });
 
 module.exports = mongoose.model('Progress', ProgressSchema);

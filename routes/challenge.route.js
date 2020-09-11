@@ -30,8 +30,17 @@
   * Operacion para agregar un nuevo reto a la lista de juegos creados por los master
   * params: master, tipo del reto, texto del reto. Encriptados en el juego
   */
- router.post('/create', function(req, res, next) {
+router.post('/create', function(req, res, next) {
     master.createChallenge(req.body.master, req.body.type, req.body.text, function(err){
+       res.json({mensaje : err });
+    });
+});
+
+/**
+ * Elimina el reto de master cuyo id entra por parámetro
+ */
+router.post('/delete', function(req, res, next) {
+    master.deleteChallenge(req.body.challengeID, function(err){
        res.json({mensaje : err });
     });
 });
@@ -64,4 +73,13 @@ router.get('/master/list/:type', function(req, res, next) {
     });
 });
 
- module.exports = router;
+/**
+ * Retorna una lista de todos los retos creados por el master que entra por parámetro
+ */
+router.get('/master/created/:master', function(req, res, next) {
+    master.getChallengesOf(req.params.master, function(err, challenges){
+        res.json({mensaje : err, list : challenges});
+    });
+});
+
+module.exports = router;

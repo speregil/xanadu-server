@@ -30,4 +30,16 @@ controller.getChallenges = function(type, callback){
     });
 }
 
+controller.getChallengesOf = function(master, callback){
+    service.getChallengesOf( master, function(err, list){
+        callback(err, list);
+    });
+}
+
+controller.deleteChallenge = function(challengeID, callback){
+    service.deleteChallenge( challengeID, function(err){
+        callback(err);
+    });
+}
+
 module.exports = controller;

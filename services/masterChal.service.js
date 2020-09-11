@@ -37,6 +37,8 @@
                     callback(null);
             });
         }
+		else
+			callback("El master: " + master + " no existe");
     });
  }
 
@@ -51,6 +53,40 @@
         else
             callback(null, list);
     });
+ }
+ 
+ /**
+  * Retorna una lista de todos los retos creados por el master que entra por parámetro
+  * master Nombre de usuario del master a consultar
+  */
+ service.getChallengesOf = function(master, callback){
+    User.find({username: master, admin: true}, function(err, user){
+        if(err)
+            callback("Error en la base de datos: " + err['errmsg']);
+		else if(user[0]){
+			MasterC.find({masterID: user[0]._id}, function(err, list){
+				if(err)
+					callback(err['errmsg'], []);
+				else
+					callback(null, list);
+			});
+		}
+		else
+			callback("El master: " + master + " no existe");
+    });
+ }
+ 
+ /**
+  * Elimina el reto especificado
+  * challangeID Identificador del reto a eliminar
+  */
+ service.deleteChallenge = function(challengeID, callback){
+		MasterC.findOneAndDelete({_id: challengeID}, function(err, search){
+			if(err)
+				callback("Error en la base de datos: " + e['errmsg']);
+			else
+				callback(null);
+		});
  }
  
  module.exports = service;

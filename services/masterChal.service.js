@@ -64,9 +64,9 @@
         if(err)
             callback("Error en la base de datos: " + err['errmsg']);
 		else if(user[0]){
-			MasterC.find({masterID: user[0]._id}, function(err, list){
+			MasterC.find({masterID: user[0]._id}, function(e, list){
 				if(err)
-					callback(err['errmsg'], []);
+					callback(e['errmsg'], []);
 				else
 					callback(null, list);
 			});
@@ -83,7 +83,7 @@
  service.deleteChallenge = function(challengeID, callback){
 		MasterC.findOneAndDelete({_id: challengeID}, function(err, search){
 			if(err)
-				callback("Error en la base de datos: " + e['errmsg']);
+				callback("Error en la base de datos: " + err['errmsg']);
 			else
 				callback(null);
 		});

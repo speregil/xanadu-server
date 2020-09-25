@@ -37,6 +37,7 @@ service.createProgressProfile = function(userID, callback) {
     prof.critico = false;
     prof.ensayoAsig = false;
     prof.ensayo = false;
+	prof.magis = false;
 
     prof.save(function(err, prof, ver){
         if(err){

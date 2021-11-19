@@ -17,7 +17,7 @@
         "forever-monitor": "^1.7.1",
         "jsonwebtoken": "^5.0.2",
         "lodash": "^4.17.15",
-        "mongodb": "^2.2.34",
+        "mongodb": "^3.1.13",
         "mongojs": "^2.4.1",
         "mongoose": "^5.5.6",
         "mongoskin": "^2.1.0",

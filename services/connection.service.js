@@ -19,7 +19,7 @@ var service = {};
 */
 service.init = function(){
     var dbHost = gConfig.database;
-    var options = { connectTimeoutMS : gConfig.dbTimeout, poolSize: gConfig.dbPoolSize, useNewUrlParser: true};
+    var options = { connectTimeoutMS : gConfig.dbTimeout, poolSize: gConfig.dbPoolSize, useNewUrlParser: true, useUnifiedTopology: true};
     mongoose.connect(dbHost, options);
 
     mongoose.connection.on('connected', function () {  

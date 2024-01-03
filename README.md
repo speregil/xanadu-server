@@ -1,6 +1,6 @@
 # Xanadu - Servidor
 
-  <p>Serrvidor de funciones y datos para el portal Xanadu. El servidor se encarga de conectarce a la base de datos y trasmitir los datos al cliente
+  <p>Servidor de funciones y datos para el portal Xanadu. El servidor se encarga de conectarce a la base de datos y trasmitir los datos al cliente
   o al master segun corresponda.</p>
 
 <h1>Requisitos</h1>
@@ -26,6 +26,6 @@
   <li>Copiar la carpeta completa del proyecto en el directorio seleccionado</li>
   <li>Cambiar los parámetros del servidor en la carpeta config/config.json</li>
   <li>Correr el archivo server.js usando Node.js</li>
-  <li>El servidor indicará en consola la conexión exitos a la base de datos y el puerto en donde estará escuchando</li>
+  <li>El servidor indicará en consola la conexión exitosa a la base de datos y el puerto en donde estará escuchando</li>
  </ol>
  
